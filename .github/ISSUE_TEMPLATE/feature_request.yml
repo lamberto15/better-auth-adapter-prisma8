@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose something this adapter doesn't do yet.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The underlying problem, not just the API you'd want — there may already be a way to do this, or a better one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: >
+        If you have one. For anything touching query translation or the
+        generators, a note on how it should behave under both PSL and
+        TypeScript authoring (see the README's "Why this isn't a port of the
+        v7 adapter" section) is especially useful — this package deliberately
+        keeps both authoring modes semantically identical.
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you're using today, or other adapters' approach to the same problem, if relevant.
+    validations:
+      required: false

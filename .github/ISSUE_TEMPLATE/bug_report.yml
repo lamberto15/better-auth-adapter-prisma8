@@ -1,0 +1,72 @@
+name: Bug report
+description: Something in the adapter, or the generated contract, isn't behaving correctly.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Since this package is verified
+        against a real database (see the [conformance suite](https://github.com/lamberto15/better-auth-adapter-prisma8#running-the-conformance-suite)),
+        a minimal reproduction is the single most useful thing you can attach.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you get instead? Include the exact error message and stack trace if there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: >
+        The adapter config you're using, the relevant part of your Better Auth
+        options, and the operation that triggers this (a `findMany` call, a
+        `generate` run, etc.). A link to a minimal repo is even better than a
+        snippet.
+      render: ts
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: better-auth-adapter-prisma8 version
+      placeholder: "0.5.0"
+    validations:
+      required: true
+
+  - type: input
+    id: prisma-version
+    attributes:
+      label: "@prisma/orm-postgres version"
+      placeholder: "8.0.0-rc.8"
+    validations:
+      required: true
+
+  - type: input
+    id: better-auth-version
+    attributes:
+      label: better-auth / @better-auth/core version
+      placeholder: "1.7.2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: authoring-mode
+    attributes:
+      label: Contract authoring mode
+      options:
+        - PSL (contract.prisma)
+        - TypeScript (contract.ts, defineContract)
+        - Not applicable
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      placeholder: "22.x"

@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: typecheck, test, build (node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/setup@v2
+        with:
+          runtime: node@${{ matrix.node-version }}
+          require-lockfile: true
+          cache: true
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      # The live conformance suite (`official-adapter-suite.integration.test.ts`)
+      # needs a real Postgres and is opt-in via LIVE_PG_URL — it's deliberately
+      # not run here. `test:offline` is the full mocked suite, which is what
+      # `prepublishOnly` also gates on, so CI enforces the same bar a publish
+      # does.
+      - name: Test
+        run: pnpm run test:offline
+
+      - name: Build
+        run: pnpm run build
+
+  live-conformance:
+    name: official conformance suite (live Postgres)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/setup@v2
+        with:
+          runtime: node@22
+          require-lockfile: true
+          cache: true
+
+      # Runs the full official @better-auth/test-utils/adapter suite — every
+      # exported suite, nothing skipped — against a real, local (same-runner)
+      # Postgres. Local keeps this fast: the suite issues on the order of ten
+      # thousand sequential statements, so latency to the database dominates
+      # the runtime (see the preflight warning this test prints if that ever
+      # regresses).
+      - name: Run live conformance suite
+        env:
+          LIVE_PG_URL: postgresql://postgres:postgres@localhost:5432/postgres
+        run: pnpm exec vitest run src/official-adapter-suite.integration.test.ts

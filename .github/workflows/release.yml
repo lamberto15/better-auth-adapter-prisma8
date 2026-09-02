@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # `pnpm/action-setup` (not the newer `pnpm/setup`) deliberately: this
+      # job needs `actions/setup-node`'s `registry-url` for npm publish auth,
+      # and `pnpm/setup` also installs a Node runtime — running both would
+      # install Node twice. `pnpm/action-setup` only installs pnpm.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck and test
+        run: |
+          pnpm run typecheck
+          pnpm run test:offline
+
+      # Changesets does one of two things on every push to main:
+      #  - if there are pending changeset files (added by a PR under
+      #    `.changeset/*.md`), it opens or updates a "Version Packages" PR
+      #    that bumps package.json and rewrites CHANGELOG.md — nothing
+      #    publishes yet.
+      #  - once that PR is merged (so package.json's version already moved
+      #    and no changesets remain), it runs `pnpm run release`
+      #    (build + `changeset publish`) and publishes to npm.
+      #
+      # Auth: requires an NPM_TOKEN repository secret — an npm automation
+      # token with publish rights on this package (npmjs.com → Access Tokens
+      # → Generate New Token → Automation). Add it under
+      # Settings → Secrets and variables → Actions; it's consumed here as
+      # NODE_AUTH_TOKEN, which is what the `registry-url` step above wires
+      # into .npmrc. Prefer npm Trusted Publishing (OIDC) instead once you've
+      # configured it on the package's npmjs.com settings — this workflow
+      # already grants the `id-token: write` permission it needs; drop the
+      # NODE_AUTH_TOKEN env var once that's set up.
+      - name: Create release PR or publish
+        uses: changesets/action@v2
+        with:
+          publish-script: pnpm run release
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

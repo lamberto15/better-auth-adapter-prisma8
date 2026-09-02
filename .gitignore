@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+*.log
+
+# tsdown / rolldown temp output
+.tsdown
+.rolldown
+*.tsbuildinfo
+
+.DS_Store
