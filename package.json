@@ -1,6 +1,6 @@
 {
 	"name": "better-auth-adapter-prisma8",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"description": "Better Auth database adapter for Prisma 8 (Prisma Next, contract-first) — built from scratch against the db.orm runtime, not a port of the classic Prisma Client adapter.",
 	"license": "MIT",
 	"repository": {

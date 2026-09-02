@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1
+
+### Patch Changes
+
+- [#7](https://github.com/lamberto15/better-auth-adapter-prisma8/pull/7) [`9b29c1b`](https://github.com/lamberto15/better-auth-adapter-prisma8/commit/9b29c1b92c76c38d7d08c186a4620a07fbe65494) Thanks [@lamberto15](https://github.com/lamberto15)! - Fixed a TOCTOU file-system race in contract discovery (`readIfExists`, used by the `generate` CLI path): it checked a file with `stat(path)` and then read it with a separate `readFile(path)` call, so whatever the path resolved to could change between the two operations. Now checks and reads through a single open file handle instead, so both operations are pinned to the exact file that was opened. Flagged by CodeQL (`js/file-system-race`); real-world exploitability was narrow (a local CLI reading the developer's own project file, not a networked or multi-tenant surface), but the fix was simple and correct so no reason not to take it.
+
 All notable changes to this package are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this package
 does not yet tag releases in git, so entries are grouped by npm version only.
