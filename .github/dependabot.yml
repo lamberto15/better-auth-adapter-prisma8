@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      # Prisma 8 ("Next") is still pre-1.0 (rc.x) and every @prisma/orm-*
+      # package in this dependency graph has to move together — a partial
+      # bump reintroduces exactly the kind of version-skew bug this adapter
+      # spent real effort chasing down and fixing (see CHANGELOG.md). Batch
+      # them into one PR instead of one-per-package.
+      prisma:
+        patterns:
+          - "@prisma/*"
+      # Same reasoning for Better Auth's own packages.
+      better-auth:
+        patterns:
+          - "better-auth"
+          - "@better-auth/*"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly

@@ -11,6 +11,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  audit:
+    name: dependency vulnerability audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/setup@v2
+        with:
+          runtime: node@22
+          require-lockfile: true
+          cache: true
+
+      # Fails on high/critical advisories. Left at `high` rather than
+      # `moderate`/`low` deliberately: those levels are commonly dominated by
+      # transitive-dependency advisories with no available fix yet, which
+      # would fail CI on every run for reasons no PR here can address.
+      # Currently clean — the transitive advisories this found at the time
+      # (diff/esbuild/valibot/vite, none reaching the published package) are
+      # pinned to patched versions via `overrides` in pnpm-workspace.yaml.
+      # Dependabot (.github/dependabot.yml) opens PRs as upstream packages
+      # clear their own vulnerable ranges naturally, at which point the
+      # matching override can be removed.
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+
   test:
     name: typecheck, test, build (node ${{ matrix.node-version }})
     runs-on: ubuntu-latest

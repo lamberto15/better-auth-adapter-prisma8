@@ -1,0 +1,35 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Catches newly-published query rules against unchanged code — a real
+    # concern for the predicate-building code in prisma8-adapter.ts, which
+    # is exactly the class of code (building query conditions from
+    # caller-supplied values) CodeQL's injection-pattern queries target.
+    - cron: "17 3 * * 1"
+
+jobs:
+  analyze:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: github/codeql-action/init@v4.37.9
+        with:
+          languages: javascript-typescript
+          # security-and-quality adds maintainability/correctness queries on
+          # top of the default security-only set — worth it for a library
+          # whose main job is building SQL predicates from caller input.
+          queries: security-and-quality
+
+      - uses: github/codeql-action/analyze@v4.37.9
+        with:
+          category: "/language:javascript-typescript"
