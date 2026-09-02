@@ -11,13 +11,46 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  audit:
+    name: dependency vulnerability audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/setup@v2
+        with:
+          runtime: node@22
+          require-lockfile: true
+          cache: true
+
+      # Fails on high/critical advisories. Left at `high` rather than
+      # `moderate`/`low` deliberately: those levels are commonly dominated by
+      # transitive-dependency advisories with no available fix yet, which
+      # would fail CI on every run for reasons no PR here can address.
+      # Currently clean — the transitive advisories this found at the time
+      # (diff/esbuild/valibot/vite, none reaching the published package) are
+      # pinned to patched versions via `overrides` in pnpm-workspace.yaml.
+      # Dependabot (.github/dependabot.yml) opens PRs as upstream packages
+      # clear their own vulnerable ranges naturally, at which point the
+      # matching override can be removed.
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+
   test:
     name: typecheck, test, build (node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 22]
+        # Node LTS lines still receiving support as of this writing (per
+        # https://github.com/nodejs/Release, checked directly rather than
+        # assumed): 22 (maintenance LTS, EOL 2027-04-30) and 24 (active LTS,
+        # EOL 2028-04-30). 18 and 20 are both already past their own EOL
+        # dates (2025-04-30 / 2026-04-30) — 18 additionally fails outright
+        # here, since @better-auth/core's generateId() calls global
+        # `crypto.randomUUID()`, which Node only exposes without a flag from
+        # v19 on. `engines.node` in package.json matches this floor.
+        node-version: [22, 24]
     steps:
       - uses: actions/checkout@v7
 
