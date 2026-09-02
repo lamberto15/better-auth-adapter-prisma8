@@ -25,9 +25,12 @@ jobs:
       # install Node twice. `pnpm/action-setup` only installs pnpm.
       - uses: pnpm/action-setup@v6
 
+      # npm Trusted Publishing requires Node >=22.14.0; pinning to 24 (this
+      # repo's active-LTS floor — see ci.yml) rather than "22" leaves no
+      # doubt a resolved patch version clears that bar.
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
@@ -48,19 +51,21 @@ jobs:
       #    and no changesets remain), it runs `pnpm run release`
       #    (build + `changeset publish`) and publishes to npm.
       #
-      # Auth: requires an NPM_TOKEN repository secret — an npm automation
-      # token with publish rights on this package (npmjs.com → Access Tokens
-      # → Generate New Token → Automation). Add it under
-      # Settings → Secrets and variables → Actions; it's consumed here as
-      # NODE_AUTH_TOKEN, which is what the `registry-url` step above wires
-      # into .npmrc. Prefer npm Trusted Publishing (OIDC) instead once you've
-      # configured it on the package's npmjs.com settings — this workflow
-      # already grants the `id-token: write` permission it needs; drop the
-      # NODE_AUTH_TOKEN env var once that's set up.
+      # Auth: npm Trusted Publishing (OIDC) — no long-lived token in this
+      # repo at all. Deliberately not passing NODE_AUTH_TOKEN: with no auth
+      # value in .npmrc, pnpm (>=11.1.3, fixing pnpm/pnpm#11513 — confirm the
+      # installed version if this ever starts failing with a 404) falls back
+      # to the OIDC token GitHub mints from the `id-token: write` permission
+      # above. Configure the matching side on npmjs.com — package Settings →
+      # Trusted Publisher → GitHub Actions → organization/user `lamberto15`,
+      # repository `better-auth-adapter-prisma8`, workflow filename
+      # `release.yml` (must match exactly, case-sensitive), no environment
+      # name set (this job doesn't declare one), "npm publish" allowed.
+      # Requires npm's own auth-and-writes 2FA mode NOT to be forced on the
+      # account for this to run non-interactively — trusted publishing is
+      # npm's own recommended replacement for loosening that setting.
       - name: Create release PR or publish
         uses: changesets/action@v2
         with:
           publish-script: pnpm run release
           github-token: ${{ secrets.GITHUB_TOKEN }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
