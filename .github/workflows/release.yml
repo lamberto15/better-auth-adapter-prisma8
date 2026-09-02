@@ -64,8 +64,19 @@ jobs:
       # Requires npm's own auth-and-writes 2FA mode NOT to be forced on the
       # account for this to run non-interactively — trusted publishing is
       # npm's own recommended replacement for loosening that setting.
+      #
+      # github-token is a fine-grained PAT (RELEASE_PAT: Contents +
+      # Pull requests, read/write, scoped to this repo only), not the
+      # default GITHUB_TOKEN. GitHub Actions has a deliberate anti-recursion
+      # rule: a PR opened with GITHUB_TOKEN cannot trigger other
+      # `pull_request`-triggered workflows — so the "Version Packages" PR
+      # this step opens would get zero CI/CodeQL checks, and the branch
+      # ruleset's required checks would never have anything to evaluate for
+      # it. A real user-authored token (PAT or GitHub App) doesn't carry
+      # that restriction. Confirmed against GitHub's own community docs on
+      # this exact scenario, not assumed.
       - name: Create release PR or publish
         uses: changesets/action@v2
         with:
           publish-script: pnpm run release
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.RELEASE_PAT }}
