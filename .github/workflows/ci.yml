@@ -42,7 +42,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 22]
+        # Node LTS lines still receiving support as of this writing (per
+        # https://github.com/nodejs/Release, checked directly rather than
+        # assumed): 22 (maintenance LTS, EOL 2027-04-30) and 24 (active LTS,
+        # EOL 2028-04-30). 18 and 20 are both already past their own EOL
+        # dates (2025-04-30 / 2026-04-30) — 18 additionally fails outright
+        # here, since @better-auth/core's generateId() calls global
+        # `crypto.randomUUID()`, which Node only exposes without a flag from
+        # v19 on. `engines.node` in package.json matches this floor.
+        node-version: [22, 24]
     steps:
       - uses: actions/checkout@v7
 
