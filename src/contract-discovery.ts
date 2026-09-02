@@ -1,4 +1,4 @@
-import { readFile, stat } from "node:fs/promises";
+import { open, stat } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 // Step 4's fallback. Imported rather than re-declared so the literal has
 // exactly one home — see the note on it in ./schema-generator for why it is a
@@ -85,15 +85,29 @@ export function modeFromExtension(filePath: string): ContractAuthoringMode {
 	return /\.[mc]?ts$/i.test(filePath) ? "typescript" : "psl";
 }
 
+/**
+ * Checks and reads through the *same* open file descriptor, rather than
+ * `stat(path)` followed by a separate `readFile(path)` — CodeQL flags that
+ * pairing as a TOCTOU race (`js/file-system-race`): between the two calls,
+ * whatever the path resolves to can change (swapped for a symlink, replaced
+ * entirely), and the read would silently operate on something other than
+ * what was just checked. A `FileHandle` pins both operations to the exact
+ * inode that was opened, independent of anything that happens to the path
+ * afterward.
+ */
 async function readIfExists(absolutePath: string): Promise<string | undefined> {
+	let handle;
 	try {
-		const info = await stat(absolutePath);
+		handle = await open(absolutePath, "r");
+		const info = await handle.stat();
 		if (!info.isFile()) return undefined;
-		return await readFile(absolutePath, "utf8");
+		return await handle.readFile("utf8");
 	} catch {
 		// ENOENT / ENOTDIR / EACCES all mean the same thing here: nothing to
 		// merge into. Discovery must never be the thing that fails codegen.
 		return undefined;
+	} finally {
+		await handle?.close();
 	}
 }
 
