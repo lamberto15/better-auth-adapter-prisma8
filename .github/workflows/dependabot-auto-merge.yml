@@ -1,0 +1,36 @@
+name: Dependabot auto-merge
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    steps:
+      - id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # This only *queues* the merge: the main ruleset's required checks (audit,
+      # tests on node 22/24, live conformance suite, CodeQL) still have to pass
+      # on an up-to-date branch before GitHub actually merges.
+      #
+      # Excluded, so they always get a human look:
+      # - majors, which usually need code changes;
+      # - the prisma and better-auth groups, since those are the libraries this
+      #   adapter targets and a bump may warrant widening peerDependencies and
+      #   adding a changeset.
+      - name: Enable auto-merge for minor/patch tooling bumps
+        if: >-
+          steps.metadata.outputs.update-type != 'version-update:semver-major' &&
+          steps.metadata.outputs.dependency-group != 'prisma' &&
+          steps.metadata.outputs.dependency-group != 'better-auth'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
