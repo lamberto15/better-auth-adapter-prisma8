@@ -44,8 +44,8 @@ that touches query translation, the generators, joins, or transactions.
 Releases are automated via [Changesets](https://github.com/changesets/changesets).
 Merging a PR with a changeset file queues it; a bot-maintained "Version
 Packages" PR batches pending changesets, and merging *that* PR publishes to
-npm. You don't need publish access to contribute — only maintainers need the
-npm token that makes the release workflow's publish step work.
+npm. You don't need publish access to contribute — the release workflow
+publishes via npm Trusted Publishing (OIDC), so no npm token exists anywhere.
 
 ## Reporting a bug
 
