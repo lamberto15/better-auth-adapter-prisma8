@@ -23,14 +23,18 @@ jobs:
       #
       # Excluded, so they always get a human look:
       # - majors, which usually need code changes;
-      # - the prisma and better-auth groups, since those are the libraries this
-      #   adapter targets and a bump may warrant widening peerDependencies and
-      #   adding a changeset.
+      # - anything touching @prisma/* or better-auth / @better-auth/*, since
+      #   those are the libraries this adapter targets and a bump may warrant
+      #   widening peerDependencies and adding a changeset.
+      #
+      # Matched by package name, not dependency-group: when only one package in
+      # a group has an update, Dependabot opens a plain single-package PR and
+      # dependency-group comes back empty (this let #31 through).
       - name: Enable auto-merge for minor/patch tooling bumps
         if: >-
           steps.metadata.outputs.update-type != 'version-update:semver-major' &&
-          steps.metadata.outputs.dependency-group != 'prisma' &&
-          steps.metadata.outputs.dependency-group != 'better-auth'
+          !contains(steps.metadata.outputs.dependency-names, '@prisma/') &&
+          !contains(steps.metadata.outputs.dependency-names, 'better-auth')
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
