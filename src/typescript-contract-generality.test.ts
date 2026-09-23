@@ -10,7 +10,7 @@ import type { BetterAuthDBSchema } from "@better-auth/core/db";
 const directory = join(process.cwd(), "node_modules", ".contract-check-prove");
 const tscArgs = (path: string) => [
 	join(process.cwd(), "node_modules", "typescript", "bin", "tsc"),
-	"--noEmit", "--strict", "--target", "ES2022", "--module", "ESNext",
+	"--ignoreConfig", "--noEmit", "--strict", "--target", "ES2022", "--module", "ESNext",
 	"--moduleResolution", "Bundler", "--skipLibCheck", path,
 ];
 

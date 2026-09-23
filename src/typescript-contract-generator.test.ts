@@ -709,6 +709,7 @@ describe("the generated contract compiles and builds against the real builder", 
 			process.execPath,
 			[
 				join(process.cwd(), "node_modules", "typescript", "bin", "tsc"),
+				"--ignoreConfig",
 				"--noEmit",
 				"--strict",
 				"--exactOptionalPropertyTypes",
