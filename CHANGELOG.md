@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.2
+
+### Patch Changes
+
+- [#35](https://github.com/lamberto15/better-auth-adapter-prisma8/pull/35) [`cf5bae8`](https://github.com/lamberto15/better-auth-adapter-prisma8/commit/cf5bae876944da64c6eb9e31028c551f263b93eb) Thanks [@lamberto15](https://github.com/lamberto15)! - Rewrote the README to focus on getting started (install, quick start, options, contract generation, transactions, limitations); implementation details moved to `docs/` on GitHub. No code changes. Now tested against Better Auth 1.7.5 and `@prisma/orm-postgres` 8.0.0-rc.11.
+
 ## 0.5.1
 
 ### Patch Changes
