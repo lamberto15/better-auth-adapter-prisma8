@@ -7,10 +7,11 @@ every application that uses it. Please report security issues responsibly.
 
 **Do not open a public GitHub issue for a security vulnerability.**
 
-Use GitHub's private vulnerability reporting: go to the **Security** tab of
-this repository → **Report a vulnerability**. This opens a private channel
-with maintainers and does not disclose the issue publicly until a fix is
-ready.
+Use GitHub's private vulnerability reporting:
+**[report a vulnerability](https://github.com/lamberto15/better-auth-adapter-prisma8/security/advisories/new)**
+(or go to the **Security** tab of this repository → **Report a
+vulnerability**). This opens a private channel with maintainers and does not
+disclose the issue publicly until a fix is ready.
 
 Include, where relevant:
 
