@@ -80,7 +80,7 @@
 		"@types/node": "^26.4.0",
 		"@types/pg": "^8.23.1",
 		"@vitest/coverage-v8": "^4.1.11",
-		"better-auth": "1.7.2",
+		"better-auth": "1.7.5",
 		"pg": "^8.23.0",
 		"tsdown": "^0.23.0",
 		"typescript": "^5.6.0",
