@@ -76,7 +76,7 @@
 		"@better-auth/test-utils": "1.7.5",
 		"@changesets/changelog-github": "^1.0.0",
 		"@changesets/cli": "^3.0.1",
-		"@prisma/orm-postgres": "8.0.0-rc.8",
+		"@prisma/orm-postgres": "8.0.0-rc.11",
 		"@types/node": "^26.4.0",
 		"@types/pg": "^8.23.1",
 		"@vitest/coverage-v8": "^4.1.11",
