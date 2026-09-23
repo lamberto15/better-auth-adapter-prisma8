@@ -4,6 +4,13 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    # Let fresh releases sit a few days before proposing them, so a
+    # compromised or quickly-yanked publish is less likely to reach an
+    # auto-merged PR (see .github/workflows/dependabot-auto-merge.yml).
+    cooldown:
+      default-days: 3
+    # Groups are matched in order; a dependency joins the first group whose
+    # patterns match, so the specific groups must stay above the catch-all.
     groups:
       # Prisma 8 ("Next") is still pre-1.0 (rc.x) and every @prisma/orm-*
       # package in this dependency graph has to move together — a partial
@@ -18,9 +25,26 @@ updates:
         patterns:
           - "better-auth"
           - "@better-auth/*"
+      # Everything else that's a minor/patch bump lands as one weekly PR.
+      # Majors are left out on purpose so each gets its own PR — they tend to
+      # need code changes (e.g. vitest 3 -> 4) and shouldn't block the rest.
+      dev-tooling:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
     open-pull-requests-limit: 10
 
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 3
+    groups:
+      actions:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
