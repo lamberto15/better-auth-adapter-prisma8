@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- [#37](https://github.com/lamberto15/better-auth-adapter-prisma8/pull/37) [`66e6200`](https://github.com/lamberto15/better-auth-adapter-prisma8/commit/66e62007b6a29881498b198ccc904090e10af59c) Thanks [@lamberto15](https://github.com/lamberto15)! - The optional `typescript` peer dependency now requires TypeScript 6 (`^6.0.0`, was `^5.6.0`). It is only used to merge new models into an existing `contract.ts`; PSL contracts are unaffected.
+
 ## 0.5.2
 
 ### Patch Changes
