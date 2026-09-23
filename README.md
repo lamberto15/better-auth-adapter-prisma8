@@ -3,6 +3,7 @@
 [![CI](https://github.com/lamberto15/better-auth-adapter-prisma8/actions/workflows/ci.yml/badge.svg)](https://github.com/lamberto15/better-auth-adapter-prisma8/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/better-auth-adapter-prisma8.svg)](https://www.npmjs.com/package/better-auth-adapter-prisma8)
 [![license](https://img.shields.io/npm/l/better-auth-adapter-prisma8.svg)](LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/lamberto15/better-auth-adapter-prisma8/badge)](https://scorecard.dev/viewer/?uri=github.com/lamberto15/better-auth-adapter-prisma8)
 
 A [Better Auth](https://better-auth.com) database adapter for **Prisma 8**
 ("Prisma Next", the contract-first data layer — `contract.prisma` + `db.orm` /
