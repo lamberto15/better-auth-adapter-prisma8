@@ -30,6 +30,7 @@ describe("relation graphs a plugin might introduce", () => {
 			process.execPath,
 			[
 				join(process.cwd(), "node_modules", "typescript", "bin", "tsc"),
+				"--ignoreConfig",
 				"--noEmit",
 				"--strict",
 				"--target",

@@ -196,6 +196,7 @@ describe("mergeTypeScriptContract — real compile and execute", () => {
 			process.execPath,
 			[
 				join(process.cwd(), "node_modules", "typescript", "bin", "tsc"),
+				"--ignoreConfig",
 				"--noEmit",
 				"--strict",
 				"--exactOptionalPropertyTypes",
