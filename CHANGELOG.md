@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+### Patch Changes
+
+- [#47](https://github.com/lamberto15/better-auth-adapter-prisma8/pull/47) [`b18e08b`](https://github.com/lamberto15/better-auth-adapter-prisma8/commit/b18e08b00a8d81bf6d7dbab1f88f2c1ffc2611d5) Thanks [@lamberto15](https://github.com/lamberto15)! - Now tested against `@prisma/orm-postgres` 8.0.0-rc.17 (was rc.11) and Better Auth 1.7.7. No code changes; the supported peer range (`^8.0.0-rc.8`) is unchanged and already includes rc.17.
+
 ## 0.6.0
 
 ### Minor Changes
